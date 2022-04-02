@@ -1,0 +1,24 @@
+* {
+  box-sizing: border-box;
+}
+
+h3 {
+  text-align: center;
+  color: hwb(180 0% 0%);
+  font-family: sans-serif;
+}
+
+.axisX path,
+.axisY path,
+.axisX line,
+.axisY line {
+  fill: none;
+  stroke: black;
+  shape-rendering: crispEdges;
+}
+
+.axisX text,
+.axisY text {
+  font-family: sans-serif;
+  font-size: 10px;
+}

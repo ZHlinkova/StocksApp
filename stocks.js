@@ -127,7 +127,7 @@ const drawLineChart = function (ds, stockName) {
 
 const getData = function () {
   d3.json(
-    "https://api.github.com/repos/ZHlinkova/D3-basics/contents/stocksData.json",
+    "https://api.github.com/repos/ZHlinkova/StocksApp/contents/stocksData.json",
     function (err, data) {
       if (err) {
         return console.log(err);
