@@ -3,6 +3,8 @@ const apiKey = `RZZ267K6YESB53V5`;
 
 const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
+// import { stocksAlt } from "./stocks";
+
 //initialize stocksData file
 const fs = require("fs");
 let stocksData = require("./stocksData");

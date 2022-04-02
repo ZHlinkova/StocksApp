@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/ZHlinkova/StocksApp/issues"
   },
-  "homepage": "https://github.com/ZHlinkova/StocksApp#readme"
+  "homepage": "https://github.com/ZHlinkova/StocksApp#readme",
+  "dependencies": {
+    "request": "^2.88.2"
+  }
 }

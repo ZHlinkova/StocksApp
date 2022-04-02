@@ -13,7 +13,7 @@ h3 {
 .axisX line,
 .axisY line {
   fill: none;
-  stroke: black;
+  stroke: rgb(12, 12, 12);
   shape-rendering: crispEdges;
 }
 

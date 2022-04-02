@@ -1,6 +1,7 @@
 "use strict";
 
 //API variables
+
 const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
 let windowWidth;
