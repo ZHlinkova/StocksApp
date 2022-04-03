@@ -35,6 +35,8 @@ window.onload = reportWindowSizeLoad;
 
 //RESIZE
 
+//BUG
+
 function reportWindowSizeResize() {
   windowWidth = window.innerWidth;
   console.log("----------Resizing window to:" + windowWidth);
@@ -42,7 +44,11 @@ function reportWindowSizeResize() {
   //clear div before redrawing
   document.getElementById("line-chart").innerHTML = "";
   //drawLineChart
-  getData(1);
+  getData(
+    1,
+    d3.select("#date-option").node().value,
+    d3.select("#stock-option").node().value
+  );
 }
 
 //LOAD
@@ -57,7 +63,11 @@ function reportWindowSizeLoad() {
   }-${dateTimeLoaded.getDate()} ${dateTimeLoaded.getHours()}:${dateTimeLoaded.getMinutes()}:${dateTimeLoaded.getSeconds()}`;
 
   //drawLineChart
-  getData(0);
+  getData(
+    0,
+    d3.select("#date-option").node().value,
+    d3.select("#stock-option").node().value
+  );
 }
 
 //line chart variables
@@ -130,7 +140,11 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
     .interpolate("linear");
 
   ///add header
-  const header = d3.select(`#line-chart`).append(`h3`).text(`${stockName}`);
+  const header = d3
+    .select(`#line-chart`)
+    .append(`h3`)
+    .text(`${stockName}`)
+    .attr("class", `header-${stockName}`);
 
   const svg = d3
     .select("#line-chart")
@@ -184,7 +198,7 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
         .html(
           `<strong>Date: ${d.date}</strong><br><strong>Close price: ${Number(
             d.price
-          ).toLocaleString("en-US")} USD<strong>`
+          ).toLocaleString("en-US")} USD</strong>`
         )
         .style("left", d3.event.pageX + 10 + "px")
         .style("top", d3.event.pageY - 40 + "px");
@@ -202,6 +216,7 @@ const getData = function (resize, selectElementsTime, selectStock) {
         return console.log(err);
       } else {
         // console.log(data);
+
         const dataDecoded = JSON.parse(window.atob(data.content));
         console.log("Stocks data:", dataDecoded);
 
@@ -209,11 +224,35 @@ const getData = function (resize, selectElementsTime, selectStock) {
           .text(`Last ${dataDecoded[0].priceSeries.length} days`)
           .attr("value", `${dataDecoded[0].priceSeries.length}`);
 
+        allCalculations(dataDecoded, resize, selectElementsTime, selectStock);
+      }
+    }
+  );
+};
+
+const allCalculations = function (
+  dataStocks,
+  resize,
+  selectElementsTime,
+  selectStock
+) {
+  //get transactions
+  d3.json(
+    "https://api.github.com/repos/ZHlinkova/StocksApp/contents/transactions.json",
+    function (err, data) {
+      if (err) {
+        return console.log(err);
+      } else {
+        const transactionsDecoded = JSON.parse(window.atob(data.content));
+        console.log("Transactions:", transactionsDecoded);
+        const trans = calcValue(transactionsDecoded);
+        console.log(trans);
+
         for (let i = 0; i < stocks.length; i++) {
           if (i === 0 && resize === 0) {
             d3.select("#dttm-loaded")
               .append("h4")
-              .text(`Data refreshed ${dataDecoded[i].dttmLoaded}`);
+              .text(`Data refreshed ${dataStocks[i].dttmLoaded}`);
           }
 
           //if stock not selected, continue
@@ -228,56 +267,72 @@ const getData = function (resize, selectElementsTime, selectStock) {
 
           const selectNo = selectElementsTime ? selectElementsTime : 100;
 
-          const splicedData = dataDecoded[i].priceSeries.splice(
-            dataDecoded[i].priceSeries.length - selectNo,
+          const splicedData = dataStocks[i].priceSeries.splice(
+            dataStocks[i].priceSeries.length - selectNo,
             selectNo
           );
-          // console.log(splicedData);
+
+          console.log(`Final stock data:`, splicedData);
           drawLineChart(splicedData, stocks[i].code, stocks[i].color, selectNo);
+
+          const lastPrice = splicedData[splicedData.length - 1].price;
+          const currentValue = trans[i].qtySum * lastPrice;
+          const holdValue = trans[i].valueSum;
+          const result = currentValue - holdValue;
+
+          d3.select(`.header-${stocks[i].code}`)
+            .append("p")
+            .text(`${result.toFixed(2)} USD`);
+
+          console.log(
+            `Current value: ${currentValue}, holdValue: ${holdValue}`
+          );
+          console.log(`Result: ${result}`);
+          console.log(
+            `Last date ${stocks[i].code}: ${
+              splicedData[splicedData.length - 1].date
+            }`
+          );
         }
       }
     }
   );
 };
 
+const calcValue = function (transactionsDecoded) {
+  for (let i = 0; i < transactionsDecoded.length; i++) {
+    let qtySum = 0;
+    let valueSum = 0;
+    for (let j = 0; j < transactionsDecoded[i].transactions.length; j++) {
+      transactionsDecoded[i].transactions[j].value =
+        transactionsDecoded[i].transactions[j].qty *
+        transactionsDecoded[i].transactions[j].price;
+      qtySum += transactionsDecoded[i].transactions[j].qty;
+      valueSum += transactionsDecoded[i].transactions[j].value;
+    }
+    transactionsDecoded[i].qtySum = qtySum;
+    transactionsDecoded[i].valueSum = valueSum;
+  }
+  const transactionsAdj = transactionsDecoded;
+  console.log("Transactions adjusted:", transactionsAdj);
+  return transactionsAdj;
+};
+
+//BUG = selecty nefungujou dobre s resizem
+
 d3.select("#date-option").on("change", (d, i) => {
   const selTime = d3.select("#date-option").node().value;
+  const selStock = d3.select("#stock-option").node().value;
+
   // console.log(`Selection: ${selTime}`);
   document.getElementById("line-chart").innerHTML = "";
-  getData(1, selTime, d3.select("#stock-option").node().value);
+  getData(1, selTime, selStock);
 });
 
 d3.select("#stock-option").on("change", (d, i) => {
+  const selTime = d3.select("#date-option").node().value;
   const selStock = d3.select("#stock-option").node().value;
   // console.log(`Selection: ${sel}`);
   document.getElementById("line-chart").innerHTML = "";
-  getData(1, d3.select("#date-option").node().value, selStock);
+  getData(1, selTime, selStock);
 });
-
-const getTransations = function () {
-  d3.json(
-    "https://api.github.com/repos/ZHlinkova/StocksApp/contents/transactions.json",
-    function (err, data) {
-      if (err) {
-        return console.log(err);
-      } else {
-        const transactionsDecoded = JSON.parse(window.atob(data.content));
-        console.log("Transactions:", transactionsDecoded);
-        calcValue(transactionsDecoded);
-      }
-    }
-  );
-};
-
-const calcValue = function (data) {
-  for (let i = 0; i < data.length; i++) {
-    for (let j = 0; j < data[i].transactions.length; j++) {
-      data[i].transactions[j].value =
-        data[i].transactions[j].qty * data[i].transactions[j].price;
-    }
-  }
-
-  console.log(data);
-};
-
-getTransations();

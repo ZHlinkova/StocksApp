@@ -2,52 +2,48 @@
   {
     "stockName": "MELI",
     "transactions": [
-      { "type": "buy", "qty": 1.171777, "price": 1877.49, "value": 0 },
-      { "type": "sell", "qty": -0.51281, "price": 1950, "value": 0 },
-      { "type": "buy", "qty": 0.32538, "price": 922, "value": 0 }
+      { "type": "buy", "qty": 1.171777, "price": 1877.49 },
+      { "type": "sell", "qty": -0.51281, "price": 1950 },
+      { "type": "buy", "qty": 0.32538, "price": 922 }
     ]
   },
   {
     "stockName": "BABA",
     "transactions": [
-      { "type": "buy", "qty": 7, "price": 257.48, "value": 0 },
-      { "type": "buy", "qty": 1, "price": 255.56, "value": 0 },
-      { "type": "buy", "qty": 3, "price": 255.97, "value": 0 }
+      { "type": "buy", "qty": 7, "price": 257.48 },
+      { "type": "buy", "qty": 1, "price": 255.56 },
+      { "type": "buy", "qty": 3, "price": 255.97 }
     ]
   },
   {
     "stockName": "MSFT",
-    "transactions": [
-      { "type": "buy", "qty": 1.065303, "price": 281.61, "value": 0 }
-    ]
+    "transactions": [{ "type": "buy", "qty": 1.065303, "price": 281.61 }]
   },
   {
     "stockName": "PYPL",
     "transactions": [
-      { "type": "buy", "qty": 2.614379, "price": 1877.49, "value": 0 },
-      { "type": "buy", "qty": 1, "price": 1877.49, "value": 0 },
-      { "type": "buy", "qty": 2.782931, "price": 1877.49, "value": 0 }
+      { "type": "buy", "qty": 2.614379, "price": 229.5 },
+      { "type": "buy", "qty": 1, "price": 203 },
+      { "type": "buy", "qty": 2.782931, "price": 97.02 }
     ]
   },
   {
     "stockName": "PLUG",
     "transactions": [
-      { "type": "buy", "qty": 5, "price": 65.4, "value": 0 },
-      { "type": "buy", "qty": 4, "price": 65.41, "value": 0 }
+      { "type": "buy", "qty": 5, "price": 65.4 },
+      { "type": "buy", "qty": 4, "price": 65.41 }
     ]
   },
   {
     "stockName": "REGI",
     "transactions": [
-      { "type": "buy", "qty": 6.735743, "price": 106.79, "value": 0 },
-      { "type": "buy", "qty": 11.57042, "price": 95.07, "value": 0 },
-      { "type": "buy", "qty": 10.36121, "price": 90.53, "value": 0 }
+      { "type": "buy", "qty": 6.735743, "price": 106.79 },
+      { "type": "buy", "qty": 11.57042, "price": 95.07 },
+      { "type": "buy", "qty": 10.36121, "price": 90.53 }
     ]
   },
   {
     "stockName": "PINS",
-    "transactions": [
-      { "type": "buy", "qty": 6.717045, "price": 59.55, "value": 0 }
-    ]
+    "transactions": [{ "type": "buy", "qty": 6.717045, "price": 59.55 }]
   }
 ]
