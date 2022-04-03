@@ -2,25 +2,38 @@
 
 //API variables
 
-let stocks = {};
+let stocks = [];
 
-stocks.codes = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
+const codes = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
-stocks.colors = [
+const colors = [
   "#D46A6A",
   "#D49A6A",
-  "#407F7F",
-  "#55AA55",
+  "#F25022",
+  "#169BD7",
   "#801515",
-  "#804515",
-  "#0D4D4D",
+  "#EED111",
+  "#BD081C",
 ];
 
-console.log(stocks);
+d3.select("#all-stocks").attr("value", `${codes.length}`);
+
+for (let i = 0; i < codes.length; i++) {
+  let tempObj = {};
+  tempObj.code = codes[i];
+  tempObj.color = colors[i];
+  stocks.push(tempObj);
+  d3.select("#stock-option")
+    .append("option")
+    .text(`${codes[i]}`)
+    .attr("value", `${i}`);
+}
 
 let windowWidth;
 window.onresize = reportWindowSizeResize;
 window.onload = reportWindowSizeLoad;
+
+//RESIZE
 
 function reportWindowSizeResize() {
   windowWidth = window.innerWidth;
@@ -29,9 +42,10 @@ function reportWindowSizeResize() {
   //clear div before redrawing
   document.getElementById("line-chart").innerHTML = "";
   //drawLineChart
-  getData();
+  getData(1);
 }
 
+//LOAD
 function reportWindowSizeLoad() {
   windowWidth = window.innerWidth;
   console.log("----------Loading report");
@@ -43,7 +57,7 @@ function reportWindowSizeLoad() {
   }-${dateTimeLoaded.getDate()} ${dateTimeLoaded.getHours()}:${dateTimeLoaded.getMinutes()}:${dateTimeLoaded.getSeconds()}`;
 
   //drawLineChart
-  getData();
+  getData(0);
 }
 
 //line chart variables
@@ -67,7 +81,7 @@ const getDate = function (d) {
   return new Date(year, month, day);
 };
 
-const drawLineChart = function (ds, stockName, color) {
+const drawLineChart = function (ds, stockName, color, ticksNo) {
   console.log(`>>>>>>>>>>Drawing line chart: ${stockName}`);
 
   const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
@@ -79,18 +93,27 @@ const drawLineChart = function (ds, stockName, color) {
 
   const maxY = d3.max(ds, (d) => Number(d.price));
 
-  //console.log(maxY);
+  const tooltip = d3
+    .select("body")
+    .append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
 
   const scaleLineX = d3.time
     .scale()
     .domain([minDate, maxDate])
     .range([paddingLeft, wL - paddingLeft]);
 
+  //if Last 7 business days, we want 7 ticks on X
+  const tickOnX = ticksNo == 7 ? 7 : ticksNox;
+
+  // console.log(tickOnX);
+
   const axisX = d3.svg
     .axis()
     .scale(scaleLineX)
     .orient("bottom")
-    .ticks(ticksNox)
+    .ticks(tickOnX)
     .tickFormat(d3.time.format(dateFormat));
 
   const scaleLineY = d3.scale
@@ -142,36 +165,86 @@ const drawLineChart = function (ds, stockName, color) {
     .attr({
       cx: (d, i) => scaleLineX(getDate(d.date)),
       cy: (d) => scaleLineY(d.price),
-      r: "2px",
+      r: "3px",
       fill: color,
       class: `circle-${stockName}`,
+    })
+    .on("mouseover", function (d) {
+      tooltip.transition().duration(500).style("opacity", 0.85);
+      tooltip
+        .html(
+          `<strong>Date: ${d.date}</strong><br><strong>Price: ${Number(
+            d.price
+          ).toLocaleString("en-US")} USD<strong>`
+        )
+        .style("left", d3.event.pageX + "px")
+        .style("top", d3.event.pageY - 28 + "px");
+    })
+    .on("mouseout", function (d) {
+      tooltip.transition().duration(300).style("opacity", 0);
     });
 };
 
-const getData = function () {
+const getData = function (resize, selectElementsTime, selectStock) {
   d3.json(
     "https://api.github.com/repos/ZHlinkova/StocksApp/contents/stocksData.json",
     function (err, data) {
       if (err) {
         return console.log(err);
       } else {
-        console.log(data);
+        // console.log(data);
         const dataDecoded = JSON.parse(window.atob(data.content));
         console.log(dataDecoded);
 
-        for (let i = 0; i < stocks.codes.length; i++) {
-          if (i === 0) {
+        d3.select("#max-option")
+          .text(`Last ${dataDecoded[0].priceSeries.length} days`)
+          .attr("value", `${dataDecoded[0].priceSeries.length}`);
+
+        for (let i = 0; i < stocks.length; i++) {
+          if (i === 0 && resize === 0) {
             d3.select("#dttm-loaded")
               .append("h4")
               .text(`Data refreshed ${dataDecoded[i].dttmLoaded}`);
           }
-          drawLineChart(
-            dataDecoded[i].priceSeries,
-            stocks.codes[i],
-            stocks.colors[i]
+
+          //if stock not selected, continue
+
+          const selectedStock = selectStock
+            ? Number(selectStock)
+            : stocks.length;
+
+          console.log(typeof selectedStock, selectedStock);
+
+          if (selectedStock !== i && selectedStock !== stocks.length) {
+            continue;
+          }
+
+          const selectNo = selectElementsTime ? selectElementsTime : 100;
+
+          const splicedData = dataDecoded[i].priceSeries.splice(
+            dataDecoded[i].priceSeries.length - selectNo,
+            selectNo
           );
+          console.log(splicedData);
+          drawLineChart(splicedData, stocks[i].code, stocks[i].color, selectNo);
         }
       }
     }
   );
 };
+
+d3.select;
+
+d3.select("#date-option").on("change", (d, i) => {
+  const selTime = d3.select("#date-option").node().value;
+  // console.log(`Selection: ${selTime}`);
+  document.getElementById("line-chart").innerHTML = "";
+  getData(1, selTime, d3.select("#stock-option").node().value);
+});
+
+d3.select("#stock-option").on("change", (d, i) => {
+  const selStock = d3.select("#stock-option").node().value;
+  // console.log(`Selection: ${sel}`);
+  document.getElementById("line-chart").innerHTML = "";
+  getData(1, d3.select("#date-option").node().value, selStock);
+});
