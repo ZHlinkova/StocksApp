@@ -2,7 +2,21 @@
 
 //API variables
 
-const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
+let stocks = {};
+
+stocks.codes = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
+
+stocks.colors = [
+  "#D46A6A",
+  "#D49A6A",
+  "#407F7F",
+  "#55AA55",
+  "#801515",
+  "#804515",
+  "#0D4D4D",
+];
+
+console.log(stocks);
 
 let windowWidth;
 window.onresize = reportWindowSizeResize;
@@ -27,11 +41,6 @@ function reportWindowSizeLoad() {
   const date = ` ${dateTimeLoaded.getFullYear()}-${
     dateTimeLoaded.getMonth() + 1
   }-${dateTimeLoaded.getDate()} ${dateTimeLoaded.getHours()}:${dateTimeLoaded.getMinutes()}:${dateTimeLoaded.getSeconds()}`;
-
-  const headerLoad = d3
-    .select("#time-loaded")
-    .append("h3")
-    .text(`Loaded at ${date}`);
 
   //drawLineChart
   getData();
@@ -58,11 +67,10 @@ const getDate = function (d) {
   return new Date(year, month, day);
 };
 
-const drawLineChart = function (ds, stockName) {
+const drawLineChart = function (ds, stockName, color) {
   console.log(`>>>>>>>>>>Drawing line chart: ${stockName}`);
 
   const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
-  const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
   const minDate = getDate(ds[0].date);
   const maxDate = getDate(ds[ds.length - 1].date);
@@ -122,9 +130,22 @@ const drawLineChart = function (ds, stockName) {
   const viz = svg
     .append("path")
     .attr("d", lineFun(ds))
-    .attr("stroke", `${randomColor}`)
+    .attr("stroke", `${color}`)
     .attr("stroke-width", 2)
     .attr("fill", "none");
+
+  const dots = svg
+    .selectAll("circle")
+    .data(ds)
+    .enter()
+    .append("circle")
+    .attr({
+      cx: (d, i) => scaleLineX(getDate(d.date)),
+      cy: (d) => scaleLineY(d.price),
+      r: "2px",
+      fill: color,
+      class: `circle-${stockName}`,
+    });
 };
 
 const getData = function () {
@@ -138,13 +159,17 @@ const getData = function () {
         const dataDecoded = JSON.parse(window.atob(data.content));
         console.log(dataDecoded);
 
-        for (let i = 0; i < stocks.length; i++) {
+        for (let i = 0; i < stocks.codes.length; i++) {
           if (i === 0) {
             d3.select("#dttm-loaded")
               .append("h4")
               .text(`Data refreshed ${dataDecoded[i].dttmLoaded}`);
           }
-          drawLineChart(dataDecoded[i].priceSeries, stocks[i]);
+          drawLineChart(
+            dataDecoded[i].priceSeries,
+            stocks.codes[i],
+            stocks.colors[i]
+          );
         }
       }
     }
