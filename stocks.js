@@ -60,6 +60,8 @@ const getDate = function (d) {
 
 const drawLineChart = function (ds, stockName) {
   console.log(`>>>>>>>>>>Drawing line chart: ${stockName}`);
+
+  select;
   const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
   const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
