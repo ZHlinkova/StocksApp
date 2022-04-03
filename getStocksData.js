@@ -5,10 +5,16 @@ const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
 let dateTimeLoaded = new Date();
 
-const dttmLoaded = ` ${dateTimeLoaded.getFullYear()}-${
-  dateTimeLoaded.getMonth() + 1
-}-${dateTimeLoaded.getDate()} ${dateTimeLoaded.getHours()}:${dateTimeLoaded.getMinutes()}:${dateTimeLoaded.getSeconds()}`;
+console.log(dateTimeLoaded);
 
+const day = ("0" + dateTimeLoaded.getDate()).slice(-2);
+const month = ("0" + (dateTimeLoaded.getMonth() + 1)).slice(-2);
+const year = dateTimeLoaded.getFullYear();
+const hour = dateTimeLoaded.getHours();
+const min = dateTimeLoaded.getMinutes();
+
+const dttmLoaded = `${year}-${month}-${day} ${hour}:${min}`;
+console.log(dttmLoaded);
 // import { stocksAlt } from "./stocks";
 
 //initialize stocksData file

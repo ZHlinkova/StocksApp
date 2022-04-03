@@ -1,6 +1,6 @@
 [
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "MELI",
     "priceSeries": [
       { "price": "1709.9800", "date": "2021-11-09" },
@@ -106,7 +106,7 @@
     ]
   },
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "BABA",
     "priceSeries": [
       { "price": "160.1900", "date": "2021-11-09" },
@@ -212,7 +212,7 @@
     ]
   },
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "MSFT",
     "priceSeries": [
       { "price": "335.9500", "date": "2021-11-09" },
@@ -318,7 +318,7 @@
     ]
   },
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "PYPL",
     "priceSeries": [
       { "price": "205.4200", "date": "2021-11-09" },
@@ -424,7 +424,7 @@
     ]
   },
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "PLUG",
     "priceSeries": [
       { "price": "40.7200", "date": "2021-11-09" },
@@ -530,7 +530,7 @@
     ]
   },
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "REGI",
     "priceSeries": [
       { "price": "57.2900", "date": "2021-11-09" },
@@ -636,7 +636,7 @@
     ]
   },
   {
-    "dttmLoaded": " 2022-4-3 14:59:21",
+    "dttmLoaded": "2022-04-03 15:24",
     "stockName": "PINS",
     "priceSeries": [
       { "price": "46.6400", "date": "2021-11-09" },

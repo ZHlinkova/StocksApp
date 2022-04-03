@@ -61,7 +61,6 @@ const getDate = function (d) {
 const drawLineChart = function (ds, stockName) {
   console.log(`>>>>>>>>>>Drawing line chart: ${stockName}`);
 
-  select;
   const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
   const randomColor = "#" + Math.floor(Math.random() * 16777215).toString(16);
 
@@ -140,6 +139,11 @@ const getData = function () {
         console.log(dataDecoded);
 
         for (let i = 0; i < stocks.length; i++) {
+          if (i === 0) {
+            d3.select("#dttm-loaded")
+              .append("h4")
+              .text(`Data refreshed ${dataDecoded[i].dttmLoaded}`);
+          }
           drawLineChart(dataDecoded[i].priceSeries, stocks[i]);
         }
       }
