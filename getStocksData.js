@@ -3,6 +3,12 @@ const apiKey = `RZZ267K6YESB53V5`;
 
 const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
+let dateTimeLoaded = new Date();
+
+const dttmLoaded = ` ${dateTimeLoaded.getFullYear()}-${
+  dateTimeLoaded.getMonth() + 1
+}-${dateTimeLoaded.getDate()} ${dateTimeLoaded.getHours()}:${dateTimeLoaded.getMinutes()}:${dateTimeLoaded.getSeconds()}`;
+
 // import { stocksAlt } from "./stocks";
 
 //initialize stocksData file
@@ -62,6 +68,7 @@ const getData = function (stockName) {
         // console.log(priceDatePairs);
 
         stocksData.push({
+          dttmLoaded: dttmLoaded,
           stockName: `${stockName}`,
           priceSeries: priceDatePairs,
         });
