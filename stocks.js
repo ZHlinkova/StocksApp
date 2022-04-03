@@ -239,14 +239,18 @@ const allCalculations = function (
   //get transactions
   d3.json(
     "https://api.github.com/repos/ZHlinkova/StocksApp/contents/transactions.json",
-    function (err, data) {
+    function (err, dataTransactions) {
       if (err) {
         return console.log(err);
       } else {
-        const transactionsDecoded = JSON.parse(window.atob(data.content));
+        const transactionsDecoded = JSON.parse(
+          window.atob(dataTransactions.content)
+        );
         console.log("Transactions:", transactionsDecoded);
         const trans = calcValue(transactionsDecoded);
         console.log(trans);
+
+        let profitTotal = 0;
 
         for (let i = 0; i < stocks.length; i++) {
           if (i === 0 && resize === 0) {
@@ -280,6 +284,8 @@ const allCalculations = function (
           const holdValue = trans[i].valueSum;
           const result = currentValue - holdValue;
 
+          profitTotal += result;
+
           d3.select(`.header-${stocks[i].code}`)
             .append("p")
             .text(`${result.toFixed(2)} USD`);
@@ -294,6 +300,9 @@ const allCalculations = function (
             }`
           );
         }
+        d3.select("#profit-total").text(
+          `Total profit/loss is ${profitTotal.toLocaleString("en-US")} USD `
+        );
       }
     }
   );
