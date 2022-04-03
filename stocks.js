@@ -109,13 +109,13 @@ const drawLineChart = function (ds, stockName) {
   const axisBottom = svg
     .append("g")
     .call(axisX)
-    .attr("class", "axis")
+    .attr("class", "axisX")
     .attr("transform", `translate(0,${hL - paddingBottom})`);
 
   const axisLeft = svg
     .append("g")
     .call(axisY)
-    .attr("class", "axis")
+    .attr("class", "axisY")
     .attr("transform", `translate(${paddingLeft},0)`);
 
   const viz = svg
