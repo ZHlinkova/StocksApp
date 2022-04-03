@@ -157,6 +157,15 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
     .attr("stroke-width", 2)
     .attr("fill", "none");
 
+  const xAxisLabel = svg
+    .append("text")
+    .attr("class", "xAxisLabel")
+    .attr("text-anchor", "end")
+    .attr("x", paddingLeft - 8)
+    .attr("y", paddingBottom - 5)
+    // .attr("font-weight", "bold")
+    .text("USD");
+
   const dots = svg
     .selectAll("circle")
     .data(ds)
@@ -173,7 +182,7 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
       tooltip.transition().duration(500).style("opacity", 0.85);
       tooltip
         .html(
-          `<strong>Date: ${d.date}</strong><br><strong>Price: ${Number(
+          `<strong>Date: ${d.date}</strong><br><strong>Close price: ${Number(
             d.price
           ).toLocaleString("en-US")} USD<strong>`
         )

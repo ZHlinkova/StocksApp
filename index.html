@@ -11,18 +11,16 @@
   <body>
     <h2>Stocks analysis</h3>
     <div id = "dttm-loaded"></div>  
-    <p>
+     <p>
+      Select stock:
+      <select id="stock-option">
+        <option value = "7" id = "all-stocks" >ALL</option>
+      </select>
       Select period:
       <select id="date-option">
         <option value="100" id = "max-option">Last 100 business days</option>
         <option value="30">Last 30 business days</option>
         <option value="7">Last 7 business days</option>
-      </select>
-    </p>
-    <p>
-      Select stock:
-      <select id="stock-option">
-        <option value = "7" id = "all-stocks" >All</option>
       </select>
     </p>
     <div id="line-chart"></div>
