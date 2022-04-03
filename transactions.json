@@ -3,7 +3,7 @@
     "stockName": "MELI",
     "transactions": [
       { "type": "buy", "qty": 1.171777, "price": 1877.49, "value": 0 },
-      { "type": "sell", "qty": 0.51281, "price": 1950, "value": 0 },
+      { "type": "sell", "qty": -0.51281, "price": 1950, "value": 0 },
       { "type": "buy", "qty": 0.32538, "price": 922, "value": 0 }
     ]
   },

@@ -203,7 +203,7 @@ const getData = function (resize, selectElementsTime, selectStock) {
       } else {
         // console.log(data);
         const dataDecoded = JSON.parse(window.atob(data.content));
-        console.log(dataDecoded);
+        console.log("Stocks data:", dataDecoded);
 
         d3.select("#max-option")
           .text(`Last ${dataDecoded[0].priceSeries.length} days`)
@@ -222,8 +222,6 @@ const getData = function (resize, selectElementsTime, selectStock) {
             ? Number(selectStock)
             : stocks.length;
 
-          console.log(typeof selectedStock, selectedStock);
-
           if (selectedStock !== i && selectedStock !== stocks.length) {
             continue;
           }
@@ -234,15 +232,13 @@ const getData = function (resize, selectElementsTime, selectStock) {
             dataDecoded[i].priceSeries.length - selectNo,
             selectNo
           );
-          console.log(splicedData);
+          // console.log(splicedData);
           drawLineChart(splicedData, stocks[i].code, stocks[i].color, selectNo);
         }
       }
     }
   );
 };
-
-d3.select;
 
 d3.select("#date-option").on("change", (d, i) => {
   const selTime = d3.select("#date-option").node().value;
@@ -257,3 +253,31 @@ d3.select("#stock-option").on("change", (d, i) => {
   document.getElementById("line-chart").innerHTML = "";
   getData(1, d3.select("#date-option").node().value, selStock);
 });
+
+const getTransations = function () {
+  d3.json(
+    "https://api.github.com/repos/ZHlinkova/StocksApp/contents/transactions.json",
+    function (err, data) {
+      if (err) {
+        return console.log(err);
+      } else {
+        const transactionsDecoded = JSON.parse(window.atob(data.content));
+        console.log("Transactions:", transactionsDecoded);
+        calcValue(transactionsDecoded);
+      }
+    }
+  );
+};
+
+const calcValue = function (data) {
+  for (let i = 0; i < data.length; i++) {
+    for (let j = 0; j < data[i].transactions.length; j++) {
+      data[i].transactions[j].value =
+        data[i].transactions[j].qty * data[i].transactions[j].price;
+    }
+  }
+
+  console.log(data);
+};
+
+getTransations();
