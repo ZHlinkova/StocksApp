@@ -174,7 +174,7 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
     .attr({
       cx: (d, i) => scaleLineX(getDate(d.date)),
       cy: (d) => scaleLineY(d.price),
-      r: "3px",
+      r: "4px",
       fill: color,
       class: `circle-${stockName}`,
     })
@@ -186,8 +186,8 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
             d.price
           ).toLocaleString("en-US")} USD<strong>`
         )
-        .style("left", d3.event.pageX + "px")
-        .style("top", d3.event.pageY - 28 + "px");
+        .style("left", d3.event.pageX + 10 + "px")
+        .style("top", d3.event.pageY - 40 + "px");
     })
     .on("mouseout", function (d) {
       tooltip.transition().duration(300).style("opacity", 0);
