@@ -10,7 +10,7 @@ const day = ("0" + dateTimeLoaded.getDate()).slice(-2);
 const month = ("0" + (dateTimeLoaded.getMonth() + 1)).slice(-2);
 const year = dateTimeLoaded.getFullYear();
 const hour = dateTimeLoaded.getHours();
-const min = dateTimeLoaded.getMinutes();
+const min = ("0" + dateTimeLoaded.getMinutes()).slice(-2);
 
 const dttmLoaded = `${year}-${month}-${day} ${hour}:${min}`;
 console.log(dttmLoaded);

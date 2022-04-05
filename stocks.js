@@ -53,7 +53,7 @@ function reportWindowSizeResize() {
 
 //LOAD
 function reportWindowSizeLoad() {
-  windowWidth = window.innerWidth;
+  windowWidth = window.innerWidth * 0.85;
   console.log("----------Loading report");
   console.log("Window width: " + windowWidth);
   let dateTimeLoaded = new Date();
@@ -279,21 +279,25 @@ const allCalculations = function (
           console.log(`Final stock data:`, splicedData);
           drawLineChart(splicedData, stocks[i].code, stocks[i].color, selectNo);
 
-          const lastPrice = splicedData[splicedData.length - 1].price;
-          const currentValue = trans[i].qtySum * lastPrice;
-          const holdValue = trans[i].valueSum;
-          const result = currentValue - holdValue;
+          trans[i].lastPrice = Number(
+            splicedData[splicedData.length - 1].price
+          );
+          trans[i].currentValue = trans[i].qtySum * trans[i].lastPrice;
+          trans[i].holdValue = trans[i].valueSum;
+          trans[i].result = trans[i].currentValue - trans[i].holdValue;
 
-          profitTotal += result;
+          profitTotal += trans[i].result;
+
+          console.log(trans);
 
           d3.select(`.header-${stocks[i].code}`)
             .append("p")
-            .text(`${result.toFixed(2)} USD`);
+            .text(`${trans[i].result.toFixed(2)} USD`);
 
           console.log(
-            `Current value: ${currentValue}, holdValue: ${holdValue}`
+            `Current value: ${trans[i].currentValue}, holdValue: ${trans[i].holdValue}`
           );
-          console.log(`Result: ${result}`);
+          console.log(`Result: ${trans[i].result}`);
           console.log(
             `Last date ${stocks[i].code}: ${
               splicedData[splicedData.length - 1].date
@@ -319,8 +323,13 @@ const calcValue = function (transactionsDecoded) {
       qtySum += transactionsDecoded[i].transactions[j].qty;
       valueSum += transactionsDecoded[i].transactions[j].value;
     }
-    transactionsDecoded[i].qtySum = qtySum;
-    transactionsDecoded[i].valueSum = valueSum;
+    transactionsDecoded[i].qtySum = Number(qtySum.toFixed(2));
+    transactionsDecoded[i].valueSum = Number(valueSum.toFixed(2));
+    transactionsDecoded[i].priceAvg = Number(
+      (transactionsDecoded[i].valueSum / transactionsDecoded[i].qtySum).toFixed(
+        2
+      )
+    );
   }
   const transactionsAdj = transactionsDecoded;
   console.log("Transactions adjusted:", transactionsAdj);
