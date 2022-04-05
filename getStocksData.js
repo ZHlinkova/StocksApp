@@ -1,5 +1,4 @@
 const apiKey = `RZZ267K6YESB53V5`;
-// const stocks = ["MELI", "BABA"];
 
 const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
 
@@ -15,7 +14,6 @@ const min = dateTimeLoaded.getMinutes();
 
 const dttmLoaded = `${year}-${month}-${day} ${hour}:${min}`;
 console.log(dttmLoaded);
-// import { stocksAlt } from "./stocks";
 
 //initialize stocksData file
 const fs = require("fs");
@@ -23,7 +21,6 @@ let stocksData = require("./stocksData");
 stocksData = [];
 
 //get stocks data functions
-
 var request = require("request");
 
 const getData = function (stockName) {
@@ -54,13 +51,11 @@ const getData = function (stockName) {
           Object.values(data["Time Series (Daily)"])
         );
 
-        //   console.log(arrDays);
         let prices = [];
 
         for (let i = 0; i < arrDays.length; i++) {
           prices.unshift(arrDays[i][`4. close`]);
         }
-        //console.log(prices, pricesDates);
 
         let priceDatePairs = [];
 
@@ -71,15 +66,13 @@ const getData = function (stockName) {
           priceDatePairs.push(tempObject);
         }
 
-        // console.log(priceDatePairs);
-
         stocksData.push({
           dttmLoaded: dttmLoaded,
           stockName: `${stockName}`,
           priceSeries: priceDatePairs,
         });
 
-        // STEP 3: Writing to a file
+        // Writing to a file
         fs.writeFile("stocksData.json", JSON.stringify(stocksData), (err) => {
           // Checking for errors
           if (err) throw err;
