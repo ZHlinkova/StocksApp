@@ -2,6 +2,14 @@
   box-sizing: border-box;
 }
 
+h1,
+h2,
+h3,
+h4,
+p {
+  padding-left: 10px;
+}
+
 h3 {
   text-align: center;
   color: hwb(180 0% 0%);
@@ -26,11 +34,13 @@ h3 {
 
 .column-left {
   float: left;
-  width: 85%;
+  width: 65%;
 }
 .column-right {
-  float: left;
-  width: 15%;
+  float: right;
+  width: 35%;
+  padding-left: 10px;
+  text-align: left;
 }
 
 /* Clear floats after the columns */
@@ -54,6 +64,6 @@ div.tooltip {
 }
 
 #profit-total {
-  text-align: right;
-  margin-right: 20px;
+  font-weight: bold;
+  font-size: 1.2em;
 }

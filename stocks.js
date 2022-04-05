@@ -38,7 +38,7 @@ window.onload = reportWindowSizeLoad;
 //BUG
 
 function reportWindowSizeResize() {
-  windowWidth = window.innerWidth;
+  windowWidth = window.innerWidth * 0.65;
   console.log("----------Resizing window to:" + windowWidth);
 
   //clear div before redrawing
@@ -53,7 +53,7 @@ function reportWindowSizeResize() {
 
 //LOAD
 function reportWindowSizeLoad() {
-  windowWidth = window.innerWidth * 0.85;
+  windowWidth = window.innerWidth * 0.65;
   console.log("----------Loading report");
   console.log("Window width: " + windowWidth);
   let dateTimeLoaded = new Date();
@@ -139,15 +139,34 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
     .y((d) => scaleLineY(d.price))
     .interpolate("linear");
 
+  ///add row
+  const row = d3
+    .select(`#line-chart`)
+    .append(`div`)
+    .attr("class", "row")
+    .attr("id", `row-${stockName}`);
+
+  const leftCol = d3
+    .select(`#row-${stockName}`)
+    .append(`div`)
+    .attr("class", "column-left")
+    .attr("id", `column-left-${stockName}`);
+
+  const righttCol = d3
+    .select(`#row-${stockName}`)
+    .append(`div`)
+    .attr("class", "column-right")
+    .attr("id", `column-right-${stockName}`);
+
   ///add header
   const header = d3
-    .select(`#line-chart`)
+    .select(`#column-left-${stockName}`)
     .append(`h3`)
     .text(`${stockName}`)
     .attr("class", `header-${stockName}`);
 
   const svg = d3
-    .select("#line-chart")
+    .select(`#column-left-${stockName}`)
     .append("svg")
     .attr("width", wL)
     .attr("height", hL);
@@ -285,28 +304,60 @@ const allCalculations = function (
           trans[i].currentValue = trans[i].qtySum * trans[i].lastPrice;
           trans[i].holdValue = trans[i].valueSum;
           trans[i].result = trans[i].currentValue - trans[i].holdValue;
+          trans[i].lastDate = splicedData[splicedData.length - 1].date;
 
           profitTotal += trans[i].result;
 
           console.log(trans);
 
-          d3.select(`.header-${stocks[i].code}`)
-            .append("p")
-            .text(`${trans[i].result.toFixed(2)} USD`);
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("h4")
+            .text(`Details`);
 
-          console.log(
-            `Current value: ${trans[i].currentValue}, holdValue: ${trans[i].holdValue}`
-          );
-          console.log(`Result: ${trans[i].result}`);
-          console.log(
-            `Last date ${stocks[i].code}: ${
-              splicedData[splicedData.length - 1].date
-            }`
-          );
+          //LAST DATE
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`Last tradindg day: ${trans[i].lastDate}`);
+
+          //LAST CLOSING PRICE
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`Last closing price: ${trans[i].lastPrice} USD`);
+
+          //CURRENT VALUE
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`Current value: ${trans[i].currentValue.toFixed(2)} USD`);
+
+          //HOLD VALUE
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`HoldValue: ${trans[i].holdValue.toFixed(2)} USD`);
+
+          //AVG HOLD PRICE
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`Avg hold price: ${trans[i].priceAvg.toFixed(2)} USD`);
+
+          //HOLD QTY
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`Avg hold price: ${trans[i].qtySum.toFixed(2)} USD`);
+          //TOTAL BUY VALUE/QTY
+          //TOTAL SELL VALUE QTY
+          //RESULT
+          d3.select(`#column-right-${stocks[i].code}`)
+            .append("p")
+            .text(`Position: ${trans[i].result.toFixed(2)} USD`)
+            .style("color", `${trans[i].result <= 0 ? "red" : "green"}`);
         }
-        d3.select("#profit-total").text(
-          `Total profit/loss is ${profitTotal.toLocaleString("en-US")} USD `
-        );
+        d3.select("#profit-total")
+          .text(
+            `Total ${
+              profitTotal <= 0 ? "loss" : "profit"
+            }: ${profitTotal.toLocaleString("en-US")} USD `
+          )
+          .style("color", `${profitTotal <= 0 ? "red" : "green"}`);
       }
     }
   );
