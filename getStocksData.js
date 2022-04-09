@@ -1,45 +1,45 @@
 const apiKey = `RZZ267K6YESB53V5`;
 
-const stocks = ["MELI", "BABA", "MSFT", "PYPL", "PLUG", "REGI", "PINS"];
+const stocks = ['MELI', 'BABA', 'MSFT', 'PYPL', 'PLUG', 'REGI', 'PINS'];
 
 let dateTimeLoaded = new Date();
 
 console.log(dateTimeLoaded);
 
-const day = ("0" + dateTimeLoaded.getDate()).slice(-2);
-const month = ("0" + (dateTimeLoaded.getMonth() + 1)).slice(-2);
+const day = ('0' + dateTimeLoaded.getDate()).slice(-2);
+const month = ('0' + (dateTimeLoaded.getMonth() + 1)).slice(-2);
 const year = dateTimeLoaded.getFullYear();
 const hour = dateTimeLoaded.getHours();
-const min = ("0" + dateTimeLoaded.getMinutes()).slice(-2);
+const min = ('0' + dateTimeLoaded.getMinutes()).slice(-2);
 
 const dttmLoaded = `${year}-${month}-${day} ${hour}:${min}`;
 console.log(dttmLoaded);
 
 //initialize stocksData file
-const fs = require("fs");
-let stocksData = require("./stocksData");
+const fs = require('fs');
+let stocksData = require('./stocksData');
 stocksData = [];
 
 //get stocks data functions
-var request = require("request");
+var request = require('request');
 
 const getData = function (stockName) {
   request.get(
     {
       url: `https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol=${stockName}&apikey=${apiKey}`,
       json: true,
-      headers: { "User-Agent": "request" },
+      headers: { 'User-Agent': 'request' },
     },
     (err, res, data) => {
       if (err) {
-        console.log("Error:", err);
+        console.log('Error:', err);
       } else if (res.statusCode !== 200) {
-        console.log("Status:", res.statusCode);
+        console.log('Status:', res.statusCode);
       } else {
         // console.log(data);
         console.log(`>>>>>>>>>>Loading data from API: ${stockName} `);
 
-        const pricesDatesBack = Object.keys(data["Time Series (Daily)"]);
+        const pricesDatesBack = Object.keys(data['Time Series (Daily)']);
 
         let pricesDates = [];
 
@@ -48,7 +48,7 @@ const getData = function (stockName) {
         }
 
         const arrDays = Object.values(
-          Object.values(data["Time Series (Daily)"])
+          Object.values(data['Time Series (Daily)'])
         );
 
         let prices = [];
@@ -73,7 +73,7 @@ const getData = function (stockName) {
         });
 
         // Writing to a file
-        fs.writeFile("stocksData.json", JSON.stringify(stocksData), (err) => {
+        fs.writeFile('stocksData.json', JSON.stringify(stocksData), err => {
           // Checking for errors
           if (err) throw err;
 

@@ -1,6 +1,9 @@
 * {
   box-sizing: border-box;
 }
+body {
+  background-color: antiquewhite;
+}
 
 h1,
 h2,
@@ -32,6 +35,29 @@ h3 {
   font-size: 10px;
 }
 
+.avg-price-hide {
+  display: none;
+}
+
+table,
+th,
+td {
+  padding: 8px;
+  height: 100%;
+}
+
+td-bold {
+  font-weight: 'bold';
+}
+
+/* tr:nth-child(even) {
+  background-color: #d6eeee;
+} */
+
+/* .avg-price {
+  padding-left: 100px;
+} */
+
 .column-left {
   float: left;
   width: 65%;
@@ -41,11 +67,12 @@ h3 {
   width: 35%;
   padding-left: 10px;
   text-align: left;
+  font-size: 14px;
 }
 
 /* Clear floats after the columns */
 .row:after {
-  content: "";
+  content: '';
   display: table;
   clear: both;
 }

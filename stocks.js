@@ -91,7 +91,7 @@ const getDate = function (d) {
   return new Date(year, month, day);
 };
 
-const drawLineChart = function (ds, stockName, color, ticksNo) {
+const drawLineChart = function (ds, stockName, color, ticksNo, avgHoldPrice) {
   console.log(`>>>>>>>>>>Drawing line chart: ${stockName}`);
 
   const wL = windowWidth * 0.95 ? windowWidth * 0.95 : 800;
@@ -101,7 +101,10 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
 
   //(minDate, maxDate);
 
-  const maxY = d3.max(ds, d => Number(d.price)) * 2;
+  const maxY =
+    d3.max(ds, d => Number(d.price)) > avgHoldPrice
+      ? d3.max(ds, d => Number(d.price))
+      : avgHoldPrice;
 
   const tooltip = d3
     .select('body')
@@ -137,6 +140,14 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
     .line()
     .x((d, i) => scaleLineX(getDate(d.date)))
     .y(d => scaleLineY(d.price))
+    .interpolate('linear');
+
+  //line avg price
+
+  const lineFunAvgPrice = d3.svg
+    .line()
+    .x((d, i) => scaleLineX(getDate(d.date)))
+    .y(d => scaleLineY(avgHoldPrice))
     .interpolate('linear');
 
   ///add row
@@ -190,6 +201,14 @@ const drawLineChart = function (ds, stockName, color, ticksNo) {
     .attr('stroke-width', 2)
     .attr('fill', 'none');
 
+  const vizAvg = svg
+    .append('path')
+    .attr('d', lineFunAvgPrice(ds))
+    .attr('stroke', 'black')
+    .attr('stroke-width', 1)
+    .attr('stroke-dasharray', '5,5')
+    .attr('fill', 'none')
+    .attr('class', 'avg-price');
   const xAxisLabel = svg
     .append('text')
     .attr('class', 'xAxisLabel')
@@ -296,7 +315,13 @@ const allCalculations = function (
           );
 
           console.log(`Final stock data:`, splicedData);
-          drawLineChart(splicedData, stocks[i].code, stocks[i].color, selectNo);
+          drawLineChart(
+            splicedData,
+            stocks[i].code,
+            stocks[i].color,
+            selectNo,
+            trans[i].priceAvg
+          );
 
           trans[i].lastPrice = Number(
             splicedData[splicedData.length - 1].price
@@ -310,48 +335,56 @@ const allCalculations = function (
 
           console.log(trans);
 
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('h4')
-            .text(`Details`);
+          //add table
 
-          //LAST DATE
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`Last tradindg day: ${trans[i].lastDate}`);
+          const matrix = [
+            { Metric: '', Value: `` },
+            { Metric: '', Value: `` },
 
-          //LAST CLOSING PRICE
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`Last closing price: ${trans[i].lastPrice} USD`);
+            { Metric: 'Last date', Value: `${trans[i].lastDate}` },
+            { Metric: 'Last price', Value: `${trans[i].lastPrice} USD` },
+            {
+              Metric: 'Hold qty',
+              Value: `${trans[i].qtySum.toFixed(2)} stocks`,
+            },
+            {
+              Metric: 'Hold avg price',
+              Value: `${trans[i].priceAvg.toFixed(2)} USD`,
+            },
+            {
+              Metric: 'Hold value',
+              Value: `${trans[i].holdValue.toFixed(2)} USD`,
+            },
+            {
+              Metric: 'Current value',
+              Value: `${trans[i].currentValue.toFixed(2)} USD`,
+            },
+            { Metric: 'Position', Value: `${trans[i].result.toFixed(2)} USD` },
+          ];
 
-          //CURRENT VALUE
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`Current value: ${trans[i].currentValue.toFixed(2)} USD`);
+          const tr = d3
+            .select(`#column-right-${stocks[i].code}`)
+            .selectAll('tr')
+            .data(matrix)
+            .enter()
+            .append('tr');
 
-          //HOLD VALUE
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`HoldValue: ${trans[i].holdValue.toFixed(2)} USD`);
-
-          //AVG HOLD PRICE
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`Avg hold price: ${trans[i].priceAvg.toFixed(2)} USD`);
-
-          //HOLD QTY
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`Avg hold price: ${trans[i].qtySum.toFixed(2)} USD`);
+          const td = tr
+            .selectAll('td')
+            .data(function (d, i) {
+              return Object.values(d);
+            })
+            .enter()
+            .append('td')
+            .attr('class', 'td-bold')
+            .text(function (d) {
+              return d;
+            });
 
           //TODO
           //TOTAL BUY VALUE/QTY
           //TOTAL SELL VALUE QTY
-          //RESULT
-          d3.select(`#column-right-${stocks[i].code}`)
-            .append('p')
-            .text(`Position: ${trans[i].result.toFixed(2)} USD`)
-            .style('color', `${trans[i].result <= 0 ? 'red' : 'green'}`);
+          //style table
         }
         d3.select('#profit-total')
           .text(
@@ -406,4 +439,16 @@ d3.select('#stock-option').on('change', (d, i) => {
   // console.log(`Selection: ${sel}`);
   document.getElementById('line-chart').innerHTML = '';
   getData(1, selTime, selStock);
+});
+
+const checkbox = document.querySelector('.checkbox');
+
+checkbox.addEventListener('change', function () {
+  if (this.checked) {
+    console.log('Checkbox is checked..');
+    d3.select('.avg-price').classed('avg-price-hide', false);
+  } else {
+    console.log('Checkbox is not checked..');
+    d3.select('.avg-price').classed('avg-price-hide', true);
+  }
 });
